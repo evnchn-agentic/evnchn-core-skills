@@ -1,0 +1,17 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "evnchn-core-skills",
+  "description": "Core skills from evnchn-agentic, packaged as one Claude Code plugin.",
+  "owner": {
+    "name": "evnchn-agentic",
+    "url": "https://github.com/evnchn-agentic"
+  },
+  "plugins": [
+    {
+      "name": "evnchn-core-skills",
+      "description": "supercomment, good-comment, mre, calibrated-adversarial-review, empirical-verify, explain-with-image.",
+      "source": "./",
+      "category": "productivity"
+    }
+  ]
+}

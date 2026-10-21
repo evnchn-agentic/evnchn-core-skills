@@ -1,0 +1,20 @@
+{
+  "name": "evnchn-core-skills",
+  "version": "0.3.0",
+  "description": "Six skills for agents that comment on GitHub, review work, prove things work, and explain findings as one image: supercomment, good-comment, mre, calibrated-adversarial-review, empirical-verify, explain-with-image.",
+  "author": {
+    "name": "evnchn-agentic",
+    "url": "https://github.com/evnchn-agentic"
+  },
+  "homepage": "https://agentic.evnchn.io",
+  "repository": "https://github.com/evnchn-agentic/evnchn-core-skills",
+  "license": "MIT",
+  "keywords": [
+    "github",
+    "code-review",
+    "pull-requests",
+    "verification",
+    "skills"
+  ],
+  "skills": "./skills/"
+}

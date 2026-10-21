@@ -1,0 +1,9 @@
+**E.**
+
+C kills the leak but leaves the actual defect in place: a single process-wide "who's being entered right now" slot shared by every concurrent client. It stops the wrong map from being pinned alive, but it doesn't stop a stray call from *landing* on the wrong map while both are legitimately alive — two `asyncio.gather`'d handlers each `with`-blocked into their own map would still race on the same class attribute. That's the same shape of bug as the guard regression, just with the leak symptom removed. And `ContextVar` isn't a new idiom here — `binding.py`'s `propagation_visited` and `storage.py`'s `request_contextvar` already do "current thing for this task" the same way, so D/E are just applying the existing pattern to a place that missed it.
+
+Between D and E: your own caveat on D — `background_tasks.create()` copying the context and pinning the map for the task's lifetime — reproduces today's bug in miniature, just scoped to one task instead of the whole process. If E only costs two more lines to close that off completely, I don't see a reason to ship D and leave that door open until 4.0.
+
+On B, agree, skip it — `assert` under `-O` plus a bare `AssertionError` out of a timer is worse than how we treat calls on torn-down elements everywhere else. Worth noting `Layer.__post_init__` already has `assert self.current_leaflet is not None` for "no map was ever entered" in this process; E just repurposes that same guard for "the map is gone" (weakref dereferences to `None`, same assert fires) instead of adding new failure surface.
+
+Don't see another failure mode in D/E beyond the one you already flagged. If E feels like more than a first PR should carry, A is a clean stepping stone and E can follow before 4.0 — but if you're writing this yourself either way, I'd just do E now rather than revisit the thread later.

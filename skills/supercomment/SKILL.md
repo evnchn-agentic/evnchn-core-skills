@@ -1,0 +1,145 @@
+---
+name: supercomment
+description: Use when writing any substantive GitHub comment, issue reply, PR body, or thread post — for humans AND for the agents that will read the thread later. Enough at a glimpse for a skimming human; structured excess underneath, because agents thrive on abundance of evidence, not scarcity. Includes "supercomment mini" (a.k.a. mini / super-concise) — the terse follow-up/ack variant: one bold verdict line + at most one fold.
+---
+
+# Supercomment
+
+A supercomment serves two readers at once:
+
+1. **The human at a glimpse.** A self-sufficient TL;DR — verdict, the one load-bearing
+   finding, what you want from them. If they read nothing else, they still act correctly.
+2. **People and agents who come later.** Collapsible excess: MREs, exact SHAs, command
+   output, empirical tables, refuted hypotheses, links to prior context. Costs the skimming
+   human nothing (it's folded); feeds every future reader who needs depth — especially
+   agents, who grep threads instead of skimming them.
+
+**The core argument: agents thrive in excess of information, not lack.**
+- Bug reports that agents can actually resolve score 110%–2700% higher on description
+  quality than unresolvable ones; low-quality inputs correlate with rejected agent output
+  ([CodeScout, arXiv 2603.05744](https://arxiv.org/pdf/2603.05744)).
+- What's written in the thread IS the agent's working substrate: in SWE-bench, ~33% of
+  "resolved" issues contained the solution in the issue text itself
+  ([SWE-bench+, arXiv 2410.06992](https://arxiv.org/pdf/2410.06992)) — and OpenAI had to
+  human-filter underspecified issues as unsolvable to build
+  [SWE-bench Verified](https://openai.com/index/introducing-swe-bench-verified/).
+- The honest caveat that shapes the format: excess **instructions** hurt (agents
+  over-obey irrelevant directives — [ETH Zurich on bloated AGENTS.md](https://www.marktechpost.com/2026/02/25/new-eth-zurich-study-proves-your-ai-coding-agents-are-failing-because-your-agents-md-files-are-too-detailed/));
+  excess **evidence** helps. A supercomment's `<details>` carry facts, repros, and
+  outcomes — never standing instructions. Same shape as progressive disclosure in
+  [SWE-Bench Pro](https://arxiv.org/pdf/2509.16941)'s problem-statement + requirements split.
+
+**Origin:** distilled from a heavy day of maintainer threads on NiceGUI (2026-06-12), where
+the working shape settled on: short and to the point, with optional details to expand on demand.
+
+## Structure (top to bottom)
+
+1. **Disclosure line** (if agent-authored): canonical form
+   *"Posted by Claude Code on \<user\>'s behalf."* — top-line italic, never a buried footer.
+   Keep the wording stable rather than reinventing it each time (swap `Posted`→`Filed`/`Opened`/`Drafted`
+   only when the verb genuinely differs; add the model name only when it matters). **May be omitted**
+   only when the same *visible* thread already carries the disclosure earlier AND no repo/org policy
+   requires it per-comment — a later reader must still be able to see in-thread that it's agent-drafted
+   (disclose once per thread, not once per reply). Private "they already know" is not enough.
+2. **TL;DR block.** Bold-prefixed (`**TL;DR:**`). Verdict first, then the ONE
+   load-bearing finding, then the ask — self-sufficient. Optimise it to be *scanned*,
+   not read: put the bold verdict label on its own line, then break the rest across short
+   paragraphs separated by blank lines. When the reasoning has 2+ discrete parts, render
+   them as a real markdown list (`1.` / `-`), never inline `(1)… (2)…` — inline enumeration
+   buried in a long sentence is the wall-of-text that defeats the glimpse reader. A skimming
+   human should catch the verdict and the shape of the argument without reading one full
+   sentence.
+3. **`<details>` blocks, one per topic**, each `<summary><b>…</b></summary>` standing
+   alone. The evidence layer: empirical tables, MRE code, file:line refs, exact commit
+   SHAs, what-was-run. Order: confirmed findings → refuted hypotheses → nits → hedged ideas.
+   Refuted hypotheses are first-class content — ruling things out is signal, and it saves
+   the next reader (or agent) from re-walking the dead end.
+4. **Explicit ask or enumerated options** ("three options we see: leave / cover / warn"),
+   not "thoughts?".
+
+## Claim discipline (what earns the trust)
+
+- **Verified vs. hedged, visibly separated.** "Confirmed (ran it): …" vs "untested unless
+  noted". Never let an unverified claim wear a verified claim's clothes.
+- **Evidence is empirical, not rhetorical.** Before/after tables from running both branches
+  beat prose. Include SHAs and commands — that's what makes the comment replayable by an
+  agent later.
+- **Process transparency:** if a finding came from another tool/conversation, link it and
+  say what was independently re-verified (and what got refuted on the way).
+- **Correct yourself in public**, in-thread, plainly — the audit trail is part of the excess.
+- **Credit the counterpart** specifically when they catch your miss or improve your sketch.
+- **Evidence proportionate to severity, before you post.** A "blocking / this is broken"
+  claim needs independently-checkable evidence in hand first — a runnable repro, a failing
+  test, logs/traces, or an exact doc citation for a conformance claim. Can't back it yet?
+  Post it *explicitly hedged*, or as a hold — don't assert severity you haven't shown.
+- **Prefer a runnable repro, and scope what it proves.** When the evidence is a script,
+  embed a self-contained copy-paste-run version + its output, folded in `<details>` (too
+  big? link an immutable test/artifact + exact commands). State what the run proves *and
+  what it doesn't* ("proves it decodes, not that the live source emits the field") —
+  unscoped, a run reads as a stronger claim than it earns.
+
+## Stock shapes (pick the closest; the structure flexes per shape)
+
+- **Review verdict** (approve / request changes): TL;DR = verdict + load-bearing finding +
+  merge-or-fix ask; details = verification evidence, refuted hypotheses, nits.
+- **Status note / hold:** 2–3 sentences, no details blocks — say what's pending and when
+  the follow-up lands ("MRE in progress; please hold merging").
+- **Proposal to a counterpart:** TL;DR = the direction + the one correction or trade-off
+  they must see; details = implementation, empirical table; end with "does this match your
+  intent?" or enumerated options.
+- **Answering questions in-thread:** one details block per question, each independently
+  citable (file:line); TL;DR says which questions are settled vs open.
+- **Follow-up reply (review addressed) / status note / small ack:** → use **Supercomment
+  mini** (next section) — one bold verdict line + at most one fold.
+
+## Supercomment mini
+
+The smallest member of the family (say "supercomment mini" / "mini" / "super-concise"). For
+**follow-up replies, "addressed your review" acks, status/hold notes, small answers** — where
+the counterpart re-reads from the diff and a full TL;DR block would be noise. Same skill, minimal skin:
+
+- **Glimpse = one bold verdict**: `**Done**` · `**Both applied**` · `**Fixed**` · `**Holding**`
+  (+ `@maintainer` if it aids routing) — for an *ack/done* reply, nothing more follows it.
+- **Status/hold is the exception:** keep the existing stock-shape contract — bold verdict **plus
+  one short visible sentence** saying what's pending and when the follow-up lands (`**Holding** —
+  MRE in progress, lands tomorrow; please don't merge yet`). Never a bare `**Holding**` that
+  drops the pending work — that's the one case where the glimpse carries a sentence, not just a label.
+- **Depth = at most one fold** — an *ack* folds its entire what-changed / evidence list into ONE
+  `<details><summary><b>What changed</b></summary>`; a status/hold takes **no** fold at all.
+- **No `**TL;DR:**` label, no visible numbered list.** Expanding the glimpse is exactly the
+  shape that gets trimmed back to "super-concise" in practice (seen on two NiceGUI PRs,
+  6155 / 6157, 2026-07-21).
+
+**Mini still inherits the full discipline** — it is not a lighter *standard*, just a lighter
+*skin*. The Claim-discipline rules and every GitHub-mechanics gotcha below apply unchanged:
+the permanent `#N` backlink / `@user` ping traps fire on a one-liner exactly as on a wall of
+text. **Super-concise ≠ drop the evidence** — it means *fold* it and shrink the glimpse to a line.
+
+## Editing posted comments
+
+Append a `Changelog` footer: date + one line per edit. Silent edits break the thread's
+value as a record.
+
+## GitHub mechanics gotchas (some are IRREVERSIBLE)
+
+- **Never write a bare `#N` (low/4-digit) to mean a list item, a review-finding number, or "point N".** GitHub auto-links `#N` to issue/PR N in the repo and — the irreversible part — **posts a permanent cross-reference backlink into that issue's timeline.** Editing *or deleting* your comment does **not** retract that backlink (verified 2026-06-29: a deleted comment still left its `#2–#5` backlinks standing; there is no API to delete a cross-reference event). So "a reviewer's finding #3" with a bare `#3` spams issue #3 **forever**. Use **prose ("finding 3")** or **escape it (`\#3` → renders "#3", no link)** — and do it **before the first post**, because escaping after the fact fixes the render but the backlink is already permanent. Same forever-trap for an unintended `@username` (pings a stranger) — escape or avoid.
+- See also the full checklist of GitHub-markdown footguns: [`evnchn-agentic/shenanigans` → `gfm-shenanigans.md`](https://github.com/evnchn-agentic/shenanigans/blob/main/gfm-shenanigans.md).
+
+## Anti-patterns
+
+- Verdict in paragraph four; `<details>` hiding the verdict itself.
+- Instructions smuggled into the evidence layer ("future agents should always …") — that's
+  the bloat failure mode, not the abundance virtue.
+- Hedging everything (no spine) or nothing (bluffing).
+- "Great PR! Just a few nits…" padding. Start at the TL;DR.
+- Trimming the MRE/SHAs "for brevity" — brevity belongs to the TL;DR layer only.
+- **A TL;DR that's one dense block.** Verdict label glued to the front of a 6-sentence
+  run-on, multi-part reasoning crammed inline as `(1)… (2)…`. It's all *there*, but the
+  glimpse reader can't skim it — the verdict and the argument's shape must survive a
+  half-second scan. Label on its own line; discrete reasons as a list.
+- **A follow-up "review addressed" reply that dumps the what-changed list unfolded**, or
+  leads with a `**TL;DR:**` paragraph, when a one-word bold verdict + one folded block would
+  do. Super-concise ≠ drop the evidence — it means fold it and shrink the glimpse to a line.
+- **A comment that adds nothing the linked source doesn't.** Add a decision, synthesis,
+  fresh evidence, or the actionable consequence — restating the PR/issue isn't a comment.
+  (Summarising for a self-sufficient TL;DR is fine; adding *zero* is the smell.)
