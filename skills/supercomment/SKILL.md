@@ -15,19 +15,21 @@ A supercomment serves two readers at once:
    agents, who grep threads instead of skimming them.
 
 **The core argument: agents thrive in excess of information, not lack.**
-- Bug reports that agents can actually resolve score 110%–2700% higher on description
-  quality than unresolvable ones; low-quality inputs correlate with rejected agent output
-  ([CodeScout, arXiv 2603.05744](https://arxiv.org/pdf/2603.05744)).
+- Resolvable bug reports score 110% to over 2700% higher on description quality than
+  non-resolvable ones (Meng et al. 2024), and rejected LLM code suggestions correlate with
+  low-quality user inputs (Nam et al. 2025), both as cited in
+  [CodeScout, arXiv 2603.05744](https://arxiv.org/pdf/2603.05744).
 - What's written in the thread IS the agent's working substrate: in SWE-bench, ~33% of
   "resolved" issues contained the solution in the issue text itself
   ([SWE-bench+, arXiv 2410.06992](https://arxiv.org/pdf/2410.06992)) — and OpenAI had to
-  human-filter underspecified issues as unsolvable to build
+  human-filter out underspecified issues to build
   [SWE-bench Verified](https://openai.com/index/introducing-swe-bench-verified/).
-- The honest caveat that shapes the format: excess **instructions** hurt (agents
-  over-obey irrelevant directives — [ETH Zurich on bloated AGENTS.md](https://www.marktechpost.com/2026/02/25/new-eth-zurich-study-proves-your-ai-coding-agents-are-failing-because-your-agents-md-files-are-too-detailed/));
+- The honest caveat that shapes the format: excess **instructions** cost (agents follow
+  context-file instructions well, yet the files raise inference cost by over 20% on average
+  and do not generally improve task success — [Gloaguen et al., *Evaluating AGENTS.md*, arXiv 2602.11988](https://arxiv.org/abs/2602.11988));
   excess **evidence** helps. A supercomment's `<details>` carry facts, repros, and
-  outcomes — never standing instructions. Same shape as progressive disclosure in
-  [SWE-Bench Pro](https://arxiv.org/pdf/2509.16941)'s problem-statement + requirements split.
+  outcomes — never standing instructions. Compare the structured task descriptions in [SWE-Bench Pro](https://arxiv.org/pdf/2509.16941)'s
+  split of each task into problem statement + requirements (+ optional interface).
 
 **Origin:** distilled from a heavy day of maintainer threads on NiceGUI (2026-06-12), where
 the working shape settled on: short and to the point, with optional details to expand on demand.
